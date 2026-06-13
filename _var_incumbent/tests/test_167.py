@@ -1,31 +1,43 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 # [CRUX-MK]
-# `from 167 import ...` is invalid Python syntax because module names cannot start with a digit.
-# This is the runnable stdlib equivalent for a file named `167.py`.
+import copy
 import importlib
 
-mod = importlib.import_module("167")
-evaluate_compliance = mod.evaluate_compliance
+m167 = importlib.import_module("167")
+evaluate_compliance = m167.evaluate_compliance
+write_report = m167.write_report
 
 
-def test_evaluate_compliance_tracks_counts_and_score():
+def test_evaluate_compliance_and_write_report(tmp_path):
     documents = [
-        {"doc_type": "license", "expires_on": "2030-01-01"},
-        {"doc_type": "insurance", "expires_on": "2020-01-01"},
-        {"doc_type": "nda", "expires_on": None},
+        {"doc_type": "business_license", "expires_on": "2030-01-01"},
+        {"doc_type": "insurance_certificate", "expires_on": "2024-01-01"},
+        {"doc_type": "safety_audit", "expires_on": None},
     ]
+    original = copy.deepcopy(documents)
 
     result = evaluate_compliance(
         documents,
-        mandatory_doc_types=["license", "insurance", "tax_certificate"],
-        as_of="2025-01-01",
+        ["business_license", "insurance_certificate", "tax_certificate"],
+        as_of=m167.date(2026, 6, 12),
     )
 
     assert result["total_docs_tracked"] == 3
     assert result["expired_docs_count"] == 1
     assert result["missing_mandatory_docs"] == ["tax_certificate"]
-    assert result["compliance_score_pct"] == 0
-    assert result["as_of"] == "2025-01-01"
-    assert result["read_only"] is True
+    assert result["compliance_score_pct"] == 66.67
+    assert documents == original
+
+    report_path = write_report(
+        documents,
+        ["business_license", "insurance_certificate", "tax_certificate"],
+        output_dir=tmp_path,
+        as_of=m167.date(2026, 6, 12),
+    )
+
+    assert report_path.name == "df-167-2026-06-12.json"
+    payload = report_path.read_text(encoding="utf-8")
+    assert '"report_date": "2026-06-12"' in payload
+    assert '"expired_docs_count": 1' in payload
 
