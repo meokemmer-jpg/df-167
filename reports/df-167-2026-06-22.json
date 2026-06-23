@@ -1,0 +1,17 @@
+{
+  "completion_rate_pct": 0.0,
+  "df": "DF-167",
+  "df_id": "167",
+  "documents_total": 0,
+  "expiring_documents_30d": 0,
+  "iso_timestamp": "2026-06-22T15:28:26+00:00",
+  "k17_pre_action_verification": {
+    "env_tag": "local",
+    "missing_anchors": [],
+    "ok": true
+  },
+  "missing_per_client": {},
+  "oldest_pending": "",
+  "source": "mock",
+  "welle": "25"
+}
