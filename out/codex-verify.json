@@ -1,0 +1,5 @@
+{
+  "verdict": "HOLDS",
+  "reason": "Der Test ruft echte Funktionen mit gemischten gueltigen, abgelaufenen und fehlenden Pflichtdokumenten auf und erzwingt dadurch konkret andere Compliance-Ausgaben inklusive Persistenzpruefung.",
+  "ts": "2026-07-08T15:08:54.419111+00:00"
+}
